@@ -20,8 +20,10 @@ Algorithm: Implementation of Raw Socket for Packet Capture
 14. Repeat packet capturing.
 15. Close the socket and stop the program.
 Easy way to memorise
+
 Remember this sequence:
 CREATE → RECEIVE → ETHERNET → IP → PROTOCOL → EXTRACT → DISPLAY → REPEAT
+
 Layer	Information extracted
 Ethernet	Source MAC   Destination MAC
 IP	       Source IP   Destination IP, TTL
