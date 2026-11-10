@@ -24,7 +24,7 @@ Easy way to memorise
 Remember this sequence:
 CREATE → RECEIVE → ETHERNET → IP → PROTOCOL → EXTRACT → DISPLAY → REPEAT
 
-Layer	Information extracted
+Layer	Information extracted:
 Ethernet	Source MAC   Destination MAC
 IP	       Source IP   Destination IP, TTL
 TCP	       Source Port Destination Port
