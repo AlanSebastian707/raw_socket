@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/select.h>                                                    //sys/select.h->select()
+int main(){
+    int s=socket(AF_INET,SOCK_STREAM,0),c,clients[10]={0},max,i,n;         //1 socket()  
+    char buf[1024];
+    struct sockaddr_in saddr={0},caddr;                                   //2 intialize ip,port
+    saddr.sin_family=AF_INET;
+    saddr.sin_addr.s_addr=INADDR_ANY;
+    saddr.sin_port=htons(12345);
+    fd_set fds;                                                          //intialize file descriptor                                       
+    if(bind(s,(struct sockaddr *)&saddr,sizeof(saddr))<0){               //bind 
+    perror("bind");
+    return 1;
+    }
+    
+    if(listen(s,5)<0){                                                   //start listening for clients
+        perror("listen");
+        return 1;
+    }
+    
+    printf("Server listening on port 12345...\n");
+
+    while(1){
+      FD_ZERO(&fds);                                            //clear fd                                                                 
+      FD_SET(s,&fds);
+      max=s;
+      for(i=0;i<10;i++){                                 //client adding loop code
+        if(clients[i]>0){
+          FD_SET(clients[i],&fds);
+          if(clients[i]>max)max=clients[i];}
+      }
+      select(max+1,&fds,NULL,NULL,NULL);                //select client
+      if(FD_ISSET(s,&fds)){
+        c=accept(s,NULL,NULL);                           //client accepting
+        for(i=0;i<10;i++){                                    
+           if(clients[i]==0){                              
+              clients[i]=c;
+              printf("client%d connected!\n",clients[i]); 
+              break;
+            }
+             
+        }
+      }
+      for(i=0;i<10;i++){                                      
+          if(clients[i]>0 && FD_ISSET(clients[i],&fds)){
+              n= recv(clients[i],buf,sizeof(buf)-1,0);       //receive message
+              if(n<=0){ 
+                  close(clients[i]);                        //disconnecting client
+                  clients[i]=0;
+                  printf("client is disconnected!\n");
+              }
+            
+              else{
+                  buf[n]='\0';                             //broadcast message
+                  printf("Message:%s\n",buf);
+                  for(int j=0;j<10;j++){
+                      if(clients[j]>0&&clients[j]!=clients[i]){
+                          send(clients[j],buf,n,0);
+                      }
+                  }
+                }
+            }    
+              
+            
+        }
+    }
+    close(s);
+    return 0;
+}
