@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+
+int main(){
+
+    int s=socket(AF_INET,SOCK_STREAM,0);
+    char buffer[1024];
+
+    struct sockaddr_in addr={0};
+
+    addr.sin_family=AF_INET;
+    addr.sin_addr.s_addr=inet_addr("127.0.0.1");
+    addr.sin_port=htons(12345);
+
+    if(connect(s,(struct sockaddr *)&addr,sizeof(addr))<0){
+        perror("connect");
+        return 1;
+    }
+    if(fork==0){
+        while(1){
+            int n =recv(s,buff,sizeof(buf)-1,0);
+            if(n<=0)break;
+            buf[n]='\0';
+            printf("\ns%",buf);
+
+        }
+    }
+    else{
+    while(1){
+        printf(">>");
+        if(fgets(buffer,sizeof(buffer),stdin);
+        send(s,buffer,strlen(buffer),0);
+    }
+}
+    close(s);
+    return 0;
+}
